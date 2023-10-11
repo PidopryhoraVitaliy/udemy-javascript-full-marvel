@@ -42,7 +42,8 @@ class CharList extends Component {
         const charactersList = !(loading || error)
             ? characters.map(character => <View
                 key={character.id}
-                character={{ name: character.name, thumbnail: character.thumbnail }}
+                onCharacterSelected={this.props.onCharacterSelected}
+                character={character}
                 isSelected={false} />)
             : null;
 
@@ -61,12 +62,15 @@ class CharList extends Component {
     }
 }
 
-const View = ({ character, isSelected }) => {
-    const { name, thumbnail } = character;
+const View = ({ character, isSelected, onCharacterSelected }) => {
+    const { name, thumbnail, id } = character;
     const className = "char__item" + (isSelected ? " char__item_selected" : "");
+    const imgObjectFit = (thumbnail.includes('image_not_available')) ? 'contain' : 'cover';
     return (
-        <li className={className}>
-            <img src={thumbnail} alt={name} />
+        <li className={className}
+            onClick={() => { onCharacterSelected(id) }}
+        >
+            <img src={thumbnail} alt={name} style={{ objectFit: imgObjectFit }} />
             <div className="char__name">{name}</div>
         </li>
     )
