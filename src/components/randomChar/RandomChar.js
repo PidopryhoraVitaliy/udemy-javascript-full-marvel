@@ -88,9 +88,7 @@ const View = ({ character }) => {
     const { name, description, thumbnail, homepage, wiki } = character;
 
     const maxDescriptionLength = 220;
-    const displayedDescription = (description.length === 0)
-        ? 'no description'
-        : (description.length > maxDescriptionLength ? (description.slice(0, maxDescriptionLength) + '...') : description);
+    const displayedDescription = (description.length > maxDescriptionLength ? (description.slice(0, maxDescriptionLength) + '...') : description);
 
     const imgObjectFit = (thumbnail.includes('image_not_available')) ? 'contain' : 'cover';
 
