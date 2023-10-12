@@ -36,6 +36,7 @@ class CharInfo extends Component {
     }
 
     updateCharacter = () => {
+        // throw new Error('crash....');
         const { characterId } = this.props;
         if (!characterId) {
             return;
