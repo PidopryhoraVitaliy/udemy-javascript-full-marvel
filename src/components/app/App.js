@@ -26,7 +26,7 @@ class App extends Component {
                     </ErrorBoundary>
                     <div className="char__content">
                         <ErrorBoundary>
-                            <CharList onCharacterSelected={this.onCharacterSelected} />
+                            <CharList onCharacterSelected={this.onCharacterSelected} selectedCharacter={this.state.selectedCharacter} />
                         </ErrorBoundary>
                         <ErrorBoundary>
                             <CharInfo characterId={this.state.selectedCharacter} />

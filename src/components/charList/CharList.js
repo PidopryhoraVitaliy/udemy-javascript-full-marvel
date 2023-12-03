@@ -59,6 +59,7 @@ class CharList extends Component {
 
     render() {
         const { charList, loading, error, newItemLoading, offset, charEnded } = this.state;
+        const selectedCharacter = this.props.selectedCharacter;
 
         const errorMessage = error ? <ErrorMessage /> : null;
         const spinner = loading ? <Spinner /> : null;
@@ -67,7 +68,7 @@ class CharList extends Component {
                 key={character.id}
                 onCharacterSelected={this.props.onCharacterSelected}
                 character={character}
-                isSelected={false} />)
+                isSelected={character.id === selectedCharacter} />)
             : null;
 
         return (
@@ -95,7 +96,14 @@ const View = ({ character, isSelected, onCharacterSelected }) => {
     const imgObjectFit = (thumbnail.includes('image_not_available')) ? 'contain' : 'cover';
     return (
         <li className={className}
+            tabIndex={0}
             onClick={() => { onCharacterSelected(id) }}
+            onKeyDown={(e) => {
+                if (e.key === ' ' || e.key === "Enter") {
+                    e.preventDefault();
+                    onCharacterSelected(id);
+                }
+            }}
         >
             <img src={thumbnail} alt={name} style={{ objectFit: imgObjectFit }} />
             <div className="char__name">{name}</div>
