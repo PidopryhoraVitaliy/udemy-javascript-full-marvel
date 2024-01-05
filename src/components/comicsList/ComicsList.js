@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import useMarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
@@ -38,13 +39,11 @@ const ComicsList = () => {
     const comicsListView = (comicsList.length > 0)
         ? comicsList.map((comic, index) =>
             <View
-                //key={comic.id}
+                // key={comic.id}
                 key={index}
                 comic={comic}
             />)
         : null;
-
-    console.log('render');
 
     return (
         <div className="comics__list">
@@ -66,14 +65,16 @@ const ComicsList = () => {
 }
 
 const View = ({ comic }) => {
-    const { title, thumbnail, url, price } = comic;
+    const { id, title, thumbnail, url, price } = comic;
     return (
         <li className="comics__item">
-            <a href={url}>
+            {/* <a href={url}> */}
+            <Link to={`/comics/${id}`}>
                 <img src={thumbnail} alt="ultimate war" className="comics__item-img" />
                 <div className="comics__item-name">{title}</div>
                 <div className="comics__item-price">{price}</div>
-            </a>
+            </Link>
+            {/* </a> */}
         </li>
     )
 }
