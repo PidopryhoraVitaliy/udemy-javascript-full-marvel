@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types'
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
 import useMarvelService from '../../services/MarvelService';
@@ -14,6 +15,8 @@ const CharList = (props) => {
     const [charEnded, setCharEnded] = useState(false);
 
     const { loading, error, getAllCharacters } = useMarvelService();
+
+    console.log(charList);
 
     useEffect(() => {
         onRequest();
@@ -40,20 +43,31 @@ const CharList = (props) => {
     const errorMessage = error ? <ErrorMessage /> : null;
     const spinner = loading ? <Spinner /> : null;
     const charactersList = (charList.length > 0)
-        ? charList.map(character =>
-            <View
+        ?
+        charList.map(character =>
+            <CSSTransition
                 key={character.id}
-                onCharacterSelected={props.onCharacterSelected}
-                character={character}
-                isSelected={character.id === selectedCharacter}
-            />)
+                timeout={1000}
+                classNames="item"
+            >
+                <View
+                    key={character.id}
+                    onCharacterSelected={props.onCharacterSelected}
+                    character={character}
+                    isSelected={character.id === selectedCharacter}
+                />
+            </CSSTransition>
+        )
+
         : null;
 
     return (
         <div className="char__list">
             <ul className="char__grid">
                 {errorMessage}
-                {charactersList}
+                <TransitionGroup component={null}>
+                    {charactersList}
+                </TransitionGroup>
                 {spinner}
             </ul>
             <button
