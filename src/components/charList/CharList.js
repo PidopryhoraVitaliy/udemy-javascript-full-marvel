@@ -16,7 +16,7 @@ const CharList = (props) => {
 
     const { loading, error, getAllCharacters } = useMarvelService();
 
-    console.log(charList);
+    // console.log(charList);
 
     useEffect(() => {
         onRequest();
