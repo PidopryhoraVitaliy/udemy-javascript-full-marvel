@@ -14,14 +14,14 @@ const SinglePage = ({ pageType }) => {
     const { loading, error, getComic, getCharacter, clearError } = useMarvelService();
 
     useEffect(() => {
-        updateComic();
+        updateData();
     }, [id]);
 
     const onDataLoaded = (data) => {
         setData(data);
     }
 
-    const updateComic = () => {
+    const updateData = () => {
         clearError();
         if (pageType === 'ComicPage') {
             getComic(id).then(onDataLoaded);
@@ -67,18 +67,15 @@ const ComicView = ({ comic }) => {
 
 const CharView = ({ char }) => {
     console.log(char);
-    const { name, description, thumbnail, price, pageCount, language } = char;
+    const { name, description, thumbnail } = char;
     return (
         <div className="single-comic">
             <img src={thumbnail} alt={name} className="single-comic__img" />
             <div className="single-comic__info">
                 <h2 className="single-comic__name">{name}</h2>
                 <p className="single-comic__descr">{description}</p>
-                {/* <p className="single-comic__descr">{pageCount}</p>
-                <p className="single-comic__descr">Language: {language}</p>
-                <div className="single-comic__price">{price}$</div> */}
             </div>
-            <Link to='/comics' className="single-comic__back">Back to all</Link>
+            <Link to='/' className="single-comic__back">Back to all</Link>
         </div>
     )
 }

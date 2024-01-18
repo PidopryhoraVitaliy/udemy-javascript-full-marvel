@@ -20,7 +20,7 @@ const App = () => {
                             <Route path='/' element={<MainPage />} />
                             <Route path='/comics' element={<ComicsPage />} />
                             <Route path='/comics/:id' element={<SinglePage pageType='ComicPage' />} />
-                            <Route path='/characters/:id' element={<SinglePage pageType='ChatPage' />} />
+                            <Route path='/characters/:id' element={<SinglePage pageType='CharPage' />} />
                             <Route path='*' element={<Page404 />} />
                         </Routes>
                     </Suspense>
