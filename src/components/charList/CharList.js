@@ -1,22 +1,39 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types'
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import ErrorMessage from '../errorMessage/ErrorMessage';
-import Spinner from '../spinner/Spinner';
 import useMarvelService from '../../services/MarvelService';
+import Spinner from '../spinner/Spinner';
+import ErrorMessage from '../errorMessage/ErrorMessage';
 
 import './charList.scss';
+
+const setContent = (process, Component) => {
+    switch (process) {
+        case 'waiting':
+            return <Spinner />;
+        case 'loading':
+            return (
+                <>
+                    <Component />
+                    <Spinner />
+                </>
+            );
+        case 'confirmed':
+            return <Component />;
+        case 'error':
+            return <ErrorMessage />;
+        default:
+            throw new Error('Unexpected process state');
+    }
+}
 
 const CharList = (props) => {
 
     const [charList, setCharList] = useState([]);
-    // const [newItemLoading, setNewItemLoading] = useState(false);
     const [offset, setOffset] = useState(210); //(1550);
     const [charEnded, setCharEnded] = useState(false);
 
-    const { loading, error, getAllCharacters } = useMarvelService();
-
-    // console.log(charList);
+    const { loading, getAllCharacters, proc: process, setProcess } = useMarvelService();
 
     useEffect(() => {
         onRequest();
@@ -24,7 +41,9 @@ const CharList = (props) => {
 
     const onRequest = (offset) => {
         // setNewItemLoading(true);
-        getAllCharacters(offset).then(onCharListLoaded);
+        getAllCharacters(offset)
+            .then(onCharListLoaded)
+            .then(() => setProcess('confirmed'));
     }
 
     const onCharListLoaded = (newCharList) => {
@@ -33,42 +52,35 @@ const CharList = (props) => {
             ended = true;
         }
         setCharList(charList => [...charList, ...newCharList]);
-        // setNewItemLoading(false);
         setOffset(offset => offset + 9);
         setCharEnded(ended);
     }
 
-    const selectedCharacter = props.selectedCharacter;
-
-    const errorMessage = error ? <ErrorMessage /> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const charactersList = (charList.length > 0)
-        ?
-        charList.map(character =>
-            <CSSTransition
-                key={character.id}
-                timeout={1000}
-                classNames="item"
-            >
-                <View
+    const renderItems = () => {
+        return (
+            charList.map(character =>
+                <CSSTransition
                     key={character.id}
-                    onCharacterSelected={props.onCharacterSelected}
-                    character={character}
-                    isSelected={character.id === selectedCharacter}
-                />
-            </CSSTransition>
+                    timeout={1000}
+                    classNames="item"
+                >
+                    <View
+                        key={character.id}
+                        onCharacterSelected={props.onCharacterSelected}
+                        character={character}
+                        isSelected={character.id === props.selectedCharacter}
+                    />
+                </CSSTransition>
+            )
         )
-
-        : null;
+    }
 
     return (
         <div className="char__list">
             <ul className="char__grid">
-                {errorMessage}
                 <TransitionGroup component={null}>
-                    {charactersList}
+                    {setContent(process, () => renderItems())}
                 </TransitionGroup>
-                {spinner}
             </ul>
             <button
                 className="button button__main button__long"
