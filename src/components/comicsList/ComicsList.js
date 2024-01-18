@@ -4,9 +4,27 @@ import useMarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
 
-// import uw from '../../resources/img/UW.png';
-// import xMen from '../../resources/img/x-men.png';
 import './comicsList.scss';
+
+const setContent = (process, Component) => {
+    switch (process) {
+        case 'waiting':
+            return <Spinner />;
+        case 'loading':
+            return (
+                <>
+                    <Component />
+                    <Spinner />
+                </>
+            );
+        case 'confirmed':
+            return <Component />;
+        case 'error':
+            return <ErrorMessage />;
+        default:
+            throw new Error('Unexpected process state');
+    }
+}
 
 const ComicsList = () => {
 
@@ -14,14 +32,16 @@ const ComicsList = () => {
     const [offset, setOffset] = useState(0);
     const [comicsEnded, setComicsEnded] = useState(false);
 
-    const { loading, error, getAllComics } = useMarvelService();
+    const { getAllComics, proc: process, setProcess } = useMarvelService();
 
     useEffect(() => {
         onRequest();
     }, []);
 
     const onRequest = (offset) => {
-        getAllComics(offset).then(onComicsListLoaded);
+        getAllComics(offset)
+            .then(onComicsListLoaded)
+            .then(() => setProcess('confirmed'));
     }
 
     const onComicsListLoaded = (newComicsList) => {
@@ -34,27 +54,21 @@ const ComicsList = () => {
         setComicsEnded(ended);
     }
 
-    const errorMessage = error ? <ErrorMessage /> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const comicsListView = (comicsList.length > 0)
-        ? comicsList.map((comic, index) =>
-            <View
-                // key={comic.id}
-                key={index}
-                comic={comic}
-            />)
-        : null;
+    const renderItems = () => comicsList.map((comic, index) =>
+        <View
+            // key={comic.id}
+            key={index}
+            comic={comic}
+        />);
 
     return (
         <div className="comics__list">
             <ul className="comics__grid">
-                {errorMessage}
-                {comicsListView}
-                {spinner}
+                {setContent(process, () => renderItems(comicsList))}
             </ul>
             <button
                 className="button button__main button__long"
-                disabled={loading}
+                disabled={process === 'loading'}
                 style={{ 'display': comicsEnded ? 'none' : 'block' }}
                 onClick={() => onRequest(offset)}
             >

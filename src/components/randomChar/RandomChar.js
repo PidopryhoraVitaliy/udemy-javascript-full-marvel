@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
-import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errorMessage/ErrorMessage';
 import useMarvelService from '../../services/MarvelService';
+import setContent from '../../utils/setContent';
 
 const RandomChar = () => {
     const [char, setChar] = useState(null);
-    const { loading, error, getCharacter, clearError } = useMarvelService();
+    const { getCharacter, clearError, proc: process, setProcess } = useMarvelService();
 
     useEffect(() => {
         updateChar();
@@ -25,19 +24,14 @@ const RandomChar = () => {
         clearError();
         const id = Math.floor(Math.random() * (1_011_400 - 1_011_000) + 1011000);
         // const id = Math.floor(Math.random() * (1_011_109 - 1_011_105) + 1_011_105); // id = 1_011_108 - error
-        getCharacter(id).then(onCharLoaded);
+        getCharacter(id)
+            .then(onCharLoaded)
+            .then(() => setProcess('confirmed'));
     }
-
-    const errorMessage = error ? <ErrorMessage /> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const content = (!loading && !error && char) ? <View character={char} /> : null;
 
     return (
         <div className="randomchar">
-            {/* {loading ? <Spinner /> : <View character={character} />} */}
-            {errorMessage}
-            {spinner}
-            {content}
+            {setContent(process, View, char)}
             <div className="randomchar__static">
                 <p className="randomchar__title">
                     Random character for today!<br />
@@ -55,8 +49,8 @@ const RandomChar = () => {
     )
 }
 
-const View = ({ character }) => {
-    const { name, description, thumbnail, homepage, wiki } = character;
+const View = ({ data }) => {
+    const { name, description, thumbnail, homepage, wiki } = data;
 
     const maxDescriptionLength = 220;
     const displayedDescription = (description.length > maxDescriptionLength ? (description.slice(0, maxDescriptionLength) + '...') : description);

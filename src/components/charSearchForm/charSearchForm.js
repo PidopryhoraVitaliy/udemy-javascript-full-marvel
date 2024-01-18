@@ -8,7 +8,7 @@ import './charSearchForm.scss';
 
 const CharSearchForm = () => {
     const [character, setCharacter] = useState(null);
-    const { loading, error, getCharacterByName, clearError } = useMarvelService();
+    const { getCharacterByName, clearError, proc: process, setProcess } = useMarvelService();
 
     const initialValues = {
         searchString: '',
@@ -22,9 +22,10 @@ const CharSearchForm = () => {
         clearError();
         getCharacterByName(searchString)
             .then(setCharacter)
+            .then(() => setProcess('confirmed'))
     };
 
-    const errorMessage = error
+    const errorMessage = (process === 'error')
         ? <div className="char__search-error">'some problem with connection...'</div>
         : null;
 
@@ -64,7 +65,7 @@ const CharSearchForm = () => {
                         <button
                             type='submit'
                             className="button button__main"
-                            disabled={loading}
+                            disabled={process === 'loading'}
                         >
                             <div className="inner">find</div>
                         </button>

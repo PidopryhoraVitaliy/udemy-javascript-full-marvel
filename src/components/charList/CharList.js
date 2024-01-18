@@ -33,7 +33,7 @@ const CharList = (props) => {
     const [offset, setOffset] = useState(210); //(1550);
     const [charEnded, setCharEnded] = useState(false);
 
-    const { loading, getAllCharacters, proc: process, setProcess } = useMarvelService();
+    const { getAllCharacters, proc: process, setProcess } = useMarvelService();
 
     useEffect(() => {
         onRequest();
@@ -56,36 +56,36 @@ const CharList = (props) => {
         setCharEnded(ended);
     }
 
-    const renderItems = () => {
+    const renderItems = (charList) => {
         return (
-            charList.map(character =>
-                <CSSTransition
-                    key={character.id}
-                    timeout={1000}
-                    classNames="item"
-                >
-                    <View
+            <TransitionGroup component={null}>
+                {charList.map(character =>
+                    <CSSTransition
                         key={character.id}
-                        onCharacterSelected={props.onCharacterSelected}
-                        character={character}
-                        isSelected={character.id === props.selectedCharacter}
-                    />
-                </CSSTransition>
-            )
+                        timeout={1000}
+                        classNames="item"
+                    >
+                        <View
+                            key={character.id}
+                            onCharacterSelected={props.onCharacterSelected}
+                            character={character}
+                            isSelected={character.id === props.selectedCharacter}
+                        />
+                    </CSSTransition>
+                )}
+            </TransitionGroup>
         )
     }
 
     return (
         <div className="char__list">
             <ul className="char__grid">
-                <TransitionGroup component={null}>
-                    {setContent(process, () => renderItems())}
-                </TransitionGroup>
+                {setContent(process, () => renderItems(charList))}
             </ul>
             <button
                 className="button button__main button__long"
                 //disabled={newItemLoading}
-                disabled={loading}
+                disabled={process === 'loading'}
                 style={{ 'display': charEnded ? 'none' : 'block' }}
                 onClick={() => onRequest(offset)}>
                 <div className="inner">load more</div>
