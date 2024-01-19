@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types'
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import useMarvelService from '../../services/MarvelService';
@@ -57,6 +57,7 @@ const CharList = (props) => {
     }
 
     const renderItems = (charList) => {
+        // console.log('render');
         return (
             <TransitionGroup component={null}>
                 {charList.map(character =>
@@ -77,9 +78,14 @@ const CharList = (props) => {
         )
     }
 
+    // const elements = useMemo(() => {
+    //     return setContent(process, () => renderItems(charList));
+    // }, [process]);
+
     return (
         <div className="char__list">
             <ul className="char__grid">
+                {/* {elements} */}
                 {setContent(process, () => renderItems(charList))}
             </ul>
             <button
